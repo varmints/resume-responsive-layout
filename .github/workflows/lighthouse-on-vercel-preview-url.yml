@@ -1,0 +1,57 @@
+name: Vercel Preview URL Lighthouse Audit
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate_lighthouse_audit:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      # wait arbitrary 120s for the build to finish, changes it if your builds are longer. Potential fix: https://github.com/marketplace/actions/await-for-vercel-deployment
+      - run: sleep 120
+      - name: Capture Vercel preview URL
+        id: vercel_preview_url
+        uses: zentered/vercel-preview-url@v1.3.0
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        with:
+          # find project id here: https://vercel.com/darkroom-engineering/satus/settings
+          vercel_team_id: 'darkroom-engineering'
+          vercel_project_id: ${{ secrets.VERCEL_PROJECT_ID }}
+      - uses: actions/checkout@v4.2.1
+      - name: Audit preview URL with Lighthouse
+        id: lighthouse_audit
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            "https://${{ steps.vercel_preview_url.outputs.preview_url }}"
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+      - name: Format lighthouse score
+        id: format_lighthouse_score
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const result = ${{ steps.lighthouse_audit.outputs.manifest }}[0].summary
+            const link = ${{ steps.lighthouse_audit.outputs.manifest }}[0].url
+            const formatResult = (res) => Math.round((res * 100))
+            Object.keys(result).forEach(key => result[key] = formatResult(result[key]))
+            const score = res => res >= 90 ? '🟢' : res >= 50 ? '🟠' : '🔴'
+            const comment = [
+                '',
+                `${score(result.performance)} Performance: ${result.performance}`,
+                `${score(result.accessibility)} Accessibility: ${result.accessibility}`,
+                `${score(result['best-practices'])} Best practices: ${result['best-practices']}`,
+                `${score(result.seo)} SEO: ${result.seo}`,
+                ' ',
+                `*Lighthouse ran on ${link}
+             core.setOutput("comment", comment);
+      - name: Create commit comment
+        uses: peter-evans/commit-comment@v3
+        with:
+          body: |
+            "${{ steps.format_lighthouse_score.outputs.comment }}"
