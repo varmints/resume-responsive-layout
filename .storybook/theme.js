@@ -8,7 +8,7 @@ export default create({
   base: 'light',
 
   //
-  colorPrimary: '#E30613',
+  colorPrimary: '#07e3d4',
   colorSecondary: '#585C6D',
 
   // UI

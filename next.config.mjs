@@ -121,7 +121,7 @@ const nextConfig = {
         emitError: true,
         showHelp: true,
         strict: false,
-        exclude: (instance) => instance.name === 'fbjs',
+        exclude: (instance) => instance.name === 'fbjs' || 'fflate',
         alwaysEmitErrorsFor: ['react', 'react-router'],
       }),
     )

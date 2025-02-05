@@ -3,6 +3,7 @@ import { Debug } from 'components/debug'
 import { GSAP } from 'components/gsap'
 import { RealViewport } from 'components/real-viewport'
 import { StyleVariables } from 'libs/style-variables'
+import { ThemeProvider } from 'next-themes'
 import { colors, themes } from 'styles/config'
 import AppData from '../../package.json'
 
@@ -57,19 +58,24 @@ export const metadata = {
 }
 
 export const viewport = {
-  themeColor: '#e30613',
+  themeColor: '#07e3d4',
 }
 
 export default function Layout({ children }) {
   return (
-    <html lang="en" dir="ltr" className={fonts?.className}>
+    <html
+      lang="en"
+      dir="ltr"
+      className={fonts?.className}
+      suppressHydrationWarning
+    >
       <head>
         <StyleVariables colors={colors} themes={themes} />
       </head>
       {GTM_ID && <GoogleTagManager gtmId={GTM_ID} />}
       <body>
         <RealViewport />
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
         <Debug />
         <GSAP />
       </body>

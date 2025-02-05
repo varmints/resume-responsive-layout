@@ -1,8 +1,8 @@
 const colors = {
-  black: '#000000',
-  white: '#ffffff',
+  black: '#2b2b2b',
   green: '#00ff6a',
-  red: '#e30613',
+  red: '#07e3d4',
+  white: '#fafafa',
 }
 
 const themes = {

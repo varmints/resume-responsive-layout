@@ -16,4 +16,27 @@ const mono = localFont({
   preload: true,
 })
 
-export const fonts = { className: cn(mono.variable) }
+const poppins = localFont({
+  src: [
+    {
+      path: '../public/fonts/Poppins/Poppins-Regular.ttf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/Poppins/Poppins-Medium.ttf',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../public/fonts/Poppins/Poppins-SemiBold.ttf',
+      weight: '600',
+      style: 'normal',
+    },
+  ],
+  display: 'swap',
+  variable: '--body-font',
+  preload: true,
+})
+
+export const fonts = { className: cn(poppins.variable, mono.variable) }
